@@ -16,20 +16,24 @@ namespace ZorkSms.Web.Modules
         {
             _smsRepository = smsRepository;
             Get["/ping"] = o => HttpStatusCode.OK;
-            Post["/ReceiveSms"] = o =>
-            {
-                var smsMessage = this.Bind<SmsMessage>();
 
-                _smsRepository.Add(smsMessage);
+            Post["/ReceiveSms"] = o => ReceiveSms();
 
-                return HttpStatusCode.OK;
-            };
+            Get["/Messages"] = o => Messages();
+        }
 
-            Get["/Messages"] = o =>
-            {
-                IList<SmsMessage> smsMessages = _smsRepository.Collection.FindAll().ToList();
-                return new JsonResponse(smsMessages, new DefaultJsonSerializer());
-            };
+        private dynamic Messages()
+        {
+            IList<SmsMessage> smsMessages = _smsRepository.Collection.FindAll().ToList();
+            return new JsonResponse(smsMessages, new DefaultJsonSerializer());
+        }
+
+        private dynamic ReceiveSms()
+        {
+            var smsMessage = this.Bind<SmsMessage>();
+            _smsRepository.Add(smsMessage);
+
+            return HttpStatusCode.OK;
         }
     }
 }
