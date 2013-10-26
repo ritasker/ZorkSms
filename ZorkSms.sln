@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZorkSms.Core", "ZorkSms.Cor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZMachine", "src\ZMachine\ZMachine.csproj", "{869A32B5-30DD-4101-B46F-A098D5331EFD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZorkSms.Data", "ZorkSms.Data\ZorkSms.Data.csproj", "{827CDD20-48D3-4422-8FE5-D341A08DD4F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{827CDD20-48D3-4422-8FE5-D341A08DD4F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{827CDD20-48D3-4422-8FE5-D341A08DD4F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{827CDD20-48D3-4422-8FE5-D341A08DD4F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{827CDD20-48D3-4422-8FE5-D341A08DD4F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
