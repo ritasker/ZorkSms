@@ -1,9 +1,13 @@
-﻿using MongoRepository;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoRepository;
 
 namespace ZorkSms.Data.Models
 {
-    public class SmsMessage : IEntity<string>
+    [CollectionName("SmsMessage")]
+    public class SmsMessage : IEntity
     {
+        [BsonRepresentation(BsonType.String)]
         public string Id { get; set; }
 
         public string To { get; set; }

@@ -28,7 +28,6 @@ namespace ZorkSms.Web.Modules
             Get["/Messages"] = o =>
             {
                 IList<SmsMessage> smsMessages = _smsRepository.Collection.FindAll().ToList();
-
                 return new JsonResponse(smsMessages, new DefaultJsonSerializer());
             };
         }
