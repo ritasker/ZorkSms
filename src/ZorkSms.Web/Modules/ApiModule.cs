@@ -1,4 +1,5 @@
 ﻿using Nancy;
+using Nancy.ModelBinding;
 
 namespace ZorkSms.Web.Modules
 {
@@ -7,6 +8,11 @@ namespace ZorkSms.Web.Modules
         public ApiModule() : base("/api")
         {
             Get["/ping"] = o => HttpStatusCode.OK;
+            Post["/ReceiveSms"] = o =>
+            {
+                this.Bind<SmsMessage>();
+                return HttpStatusCode.OK
+            } 
         }
     }
 }
