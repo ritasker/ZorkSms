@@ -48,7 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ZMachine\ZMachine.csproj">
+    <ProjectReference Include="..\src\ZMachine\ZMachine.csproj">
       <Project>{869a32b5-30dd-4101-b46f-a098d5331efd}</Project>
       <Name>ZMachine</Name>
     </ProjectReference>
