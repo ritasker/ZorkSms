@@ -6,7 +6,7 @@ namespace ZorkSms.Web.Modules
     {
         public HomeModule()
         {
-            Get["/"] = _ => { return View["Index"]; };
+            Get["/"] = o => View["Index"];
         }
     }
 }
