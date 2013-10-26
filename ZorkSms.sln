@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZorkSms.Web", "src\ZorkSms.Web\ZorkSms.Web.csproj", "{A31DFC2E-FA37-4D2F-9654-9CFAD3B9D1B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZMachine", "ZMachine\ZMachine.csproj", "{869A32B5-30DD-4101-B46F-A098D5331EFD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZorkSms.Core", "ZorkSms.Core\ZorkSms.Core.csproj", "{DB146B51-95F2-46B1-A661-B0A2EFBD0631}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZMachine", "src\ZMachine\ZMachine.csproj", "{869A32B5-30DD-4101-B46F-A098D5331EFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +17,14 @@ Global
 		{A31DFC2E-FA37-4D2F-9654-9CFAD3B9D1B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A31DFC2E-FA37-4D2F-9654-9CFAD3B9D1B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A31DFC2E-FA37-4D2F-9654-9CFAD3B9D1B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DB146B51-95F2-46B1-A661-B0A2EFBD0631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DB146B51-95F2-46B1-A661-B0A2EFBD0631}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB146B51-95F2-46B1-A661-B0A2EFBD0631}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB146B51-95F2-46B1-A661-B0A2EFBD0631}.Release|Any CPU.Build.0 = Release|Any CPU
+		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{869A32B5-30DD-4101-B46F-A098D5331EFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
