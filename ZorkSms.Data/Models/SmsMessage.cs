@@ -4,12 +4,8 @@ using MongoRepository;
 
 namespace ZorkSms.Data.Models
 {
-    [CollectionName("SmsMessage")]
-    public class SmsMessage : IEntity
+    public class SmsMessage : Entity
     {
-        [BsonRepresentation(BsonType.String)]
-        public string Id { get; set; }
-
         public string To { get; set; }
         public string From { get; set; }
         public string Content { get; set; }
