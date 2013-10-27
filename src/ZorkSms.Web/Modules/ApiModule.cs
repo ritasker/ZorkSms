@@ -24,10 +24,8 @@ namespace ZorkSms.Web.Modules
 
             Post["/ReceiveSms"] = o => ReceiveSms();
 
-            //Get["/ping"] = o => HttpStatusCode.OK;
-            //Get["/Messages"] = o => Messages();
-            //Get["/TestReceive"] = o => { return this.View["TestReceive"]; };
-            //Post["/TestReceive"] = o => { return TestReceive().Result; };
+            Get["/TestReceive"] = o => { return this.View["TestReceive"]; };
+            Post["/TestReceive"] = o => { return TestReceive().Result; };
         }
 
         private async Task<dynamic> ReceiveSms()
@@ -44,9 +42,9 @@ namespace ZorkSms.Web.Modules
 
         private async Task<string> HandleSms(SmsMessage smsMessage)
         {
-            SessionModel session = _sessionRepository.FindByPhoneNumber(smsMessage.From);
-
             bool isNewGame = string.Equals(smsMessage.Content, "NEW GAME", StringComparison.OrdinalIgnoreCase);
+
+            SessionModel session = _sessionRepository.FindByPhoneNumber(smsMessage.From);
 
             Game game = null;
             var assembly = Assembly.GetExecutingAssembly();
@@ -77,18 +75,15 @@ namespace ZorkSms.Web.Modules
             game.Start();
             wait.WaitOne();
 
-            lock (sessionLock)
+            if (session != null)
             {
-                if (session != null)
-                {
-                    session.Commands = commands;
-                    _sessionRepository.Update(session);
-                }
-                else
-                {
-                    session = new SessionModel {PhoneNumber = smsMessage.From, Commands = commands};
-                    _sessionRepository.Add(session);
-                }
+                session.Commands = commands;
+                _sessionRepository.Update(session);
+            }
+            else
+            {
+                session = new SessionModel { PhoneNumber = smsMessage.From, Commands = commands };
+                _sessionRepository.Add(session);
             }
 
             return messages.Last();
