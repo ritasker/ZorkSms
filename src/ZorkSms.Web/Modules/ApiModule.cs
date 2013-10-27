@@ -3,6 +3,7 @@ using System.Linq;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
+using Nancy.Validation.Rules;
 using ZorkSms.Data;
 using ZorkSms.Data.Models;
 using System;
@@ -56,18 +57,8 @@ namespace ZorkSms.Web.Modules
             SmsMessage smsMessage = (SmsMessage)arg;
             bool isNewGame = string.Equals(smsMessage.Content, "NEW GAME", StringComparison.OrdinalIgnoreCase);
 
-            SessionModel session = null;
-            if (!isNewGame)
-            {
-                session = _sessionRepository.FindByPhoneNumber(smsMessage.From);
-            }
-
-            Game game;
-            if (session != null)
-            {
-                game = Game.Restore(session.Data);
-            }
-            else
+            Game game = null;
+            if (isNewGame)
             {
                 var assembly = Assembly.GetExecutingAssembly();
                 var resource = assembly.GetManifestResourceStream("ZorkSms.Web.minizork.z3");
@@ -76,9 +67,22 @@ namespace ZorkSms.Web.Modules
                 resource.Read(storyBytes, 0, (int)resource.Length);
                 resource.Close();
 
-                game = Game.CreateNew(storyBytes);
-                isNewGame = true;
+                game = Game.Create(storyBytes);
             }
+            else
+            {
+                SessionModel session = _sessionRepository.FindByPhoneNumber(smsMessage.From);
+
+                if (session != null)
+                {
+                    game = Game.Create(session.Data);
+                } 
+                
+                //game.Process(smsMessage.Content);
+            }
+
+            //game.Start();
+            game.Process(smsMessage.Content);
 
             game.PrintCompleted += (sender, args) =>
             {
@@ -89,23 +93,16 @@ namespace ZorkSms.Web.Modules
 
                 byte[] saveData = game.Save();
                 var newSession = new SessionModel { PhoneNumber = smsMessage.From, Data = saveData };
-                if (!isNewGame)
-                {
-                    _sessionRepository.Add(newSession);
-                }
-                else
+
+                if (isNewGame)
                 {
                     _sessionRepository.Update(newSession);
                 }
+                else
+                {
+                    _sessionRepository.Add(newSession);
+                }
             };
-
-            if (!isNewGame)
-            {
-                game.Process(smsMessage.Content);
-                
-            }
-
-            game.Start();
         }
     }
 }

@@ -16,15 +16,10 @@ namespace ZorkSms.Core
         protected Game(byte[] data)
         {
             _virtualMachine = ClockworkZMachine.Create(data);
-            _virtualMachine.Window.PrintCompleted += OnPrintCompleted;
+            //_virtualMachine.Window.PrintCompleted += OnPrintCompleted;
         }
 
-        public static Game CreateNew(byte[] data)
-        {
-            return new Game(data);
-        }
-
-        public static Game Restore(byte[] data)
+        public static Game Create(byte[] data)
         {
             return new Game(data);
         }
