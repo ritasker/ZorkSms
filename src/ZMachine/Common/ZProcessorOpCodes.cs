@@ -297,7 +297,7 @@ namespace ZMachine.Common
 
                 Branch(child != 0, inst);
             }
-            else
+            else  
             {
                 short child = z_objtable.getChild(inst.Operands[0]);
                 z_memory.PutVariable(inst.Result, child);
@@ -440,6 +440,9 @@ namespace ZMachine.Common
         {
             if (OnSave != null)
                 OnSave();
+
+                inst.Decode(pc);
+
             else
                 z_io.Print("\n*** Save not currently handled ***\n");
         }
