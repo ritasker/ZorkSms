@@ -9,6 +9,7 @@ namespace ZMachine
 {
     public interface IZProcessor
     {
+        IZMemory Memory { get; }
         void Stop();
         void Start();
         bool Running { get; }

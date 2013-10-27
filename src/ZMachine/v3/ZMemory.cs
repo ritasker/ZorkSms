@@ -182,5 +182,14 @@ namespace ZMachine.v3
             else
                 return;
         }
+
+        public byte[] Save()
+        {
+            return m_bytes;
+        }
+
+        public void Restore(byte[] data){
+            m_bytes = data;
+        }
     }
 }

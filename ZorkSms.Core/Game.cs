@@ -7,28 +7,46 @@ using System.Threading.Tasks;
 
 namespace ZorkSms.Core
 {
-    class Game
+    public class Game
     {
         private ClockworkZMachine _virtualMachine;
 
-        public Game()
+        public event EventHandler<PrintCompletedEventArgs> PrintCompleted;
+
+        protected Game(byte[] data)
         {
-            
+            _virtualMachine = ClockworkZMachine.Create(data);
+            _virtualMachine.Window.PrintCompleted += OnPrintCompleted;
         }
 
-        public void Start(string path)
+        public static Game CreateNew(byte[] data)
         {
-            byte[] storyBytes;
+            return new Game(data);
+        }
 
-            using (var stream = new FileStream(path, FileMode.Open))
-            {
-                storyBytes = new byte[stream.Length];
-                stream.Read(storyBytes, 0, (int)stream.Length);
-                stream.Close();
-            }
+        public static Game Restore(byte[] data)
+        {
+            return new Game(data);
+        }
 
-            _virtualMachine = ClockworkZMachine.Create(storyBytes);
+        public void Process(string message)
+        {
+            _virtualMachine.Process(message);
+        }
+
+        public void Start()
+        {
             _virtualMachine.Start();
+        }
+
+        private void OnPrintCompleted(object sender, PrintCompletedEventArgs args)
+        {
+            if (PrintCompleted != null) PrintCompleted(this, args);
+        }
+
+        public byte[] Save()
+        {
+            return _virtualMachine.Save();
         }
     }
 }

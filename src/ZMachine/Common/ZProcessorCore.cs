@@ -9,6 +9,7 @@ namespace ZMachine.Common
 {
     public partial class ZProcessorCore : IZProcessor
     {
+        public IZMemory Memory { get { return z_memory; } }
         // Version Specific
         protected IZMemory z_memory = null;
         protected IZDictionary z_dict = null;
