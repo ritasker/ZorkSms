@@ -17,10 +17,12 @@ namespace ZorkSms.Web.Modules
     {
         private static object sessionLock = new object();
         private readonly SessionRepository _sessionRepository;
+        private readonly SmsRepository _smsRepository;
 
-        public ApiModule(SessionRepository sessionRepository) : base("/api")
+        public ApiModule(SmsRepository smsRepository, SessionRepository sessionRepository) : base("/api")
         {
             _sessionRepository = sessionRepository;
+            _smsRepository = smsRepository;
 
             Post["/ReceiveSms"] = o => ReceiveSms();
 
@@ -31,6 +33,11 @@ namespace ZorkSms.Web.Modules
         private async Task<dynamic> ReceiveSms()
         {
             var smsMessage = this.Bind<SmsMessage>();
+
+            var result = _smsRepository.FindByMessageId(smsMessage.Msg_ID);
+            if (result != null) return HttpStatusCode.OK;
+
+            _smsRepository.Add(smsMessage);
 
             var response = await HandleSms(smsMessage);
 
