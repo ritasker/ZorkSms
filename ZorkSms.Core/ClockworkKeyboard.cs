@@ -24,10 +24,7 @@ namespace ZorkSms.Core
 
         public override string ReadString(int? time)
         {
-            while (_messages.Count == 0)
-            {
-                Thread.Sleep(TimeSpan.FromMilliseconds(500));
-            }
+            if (_messages.Count == 0) return string.Empty;
 
             string message = _messages.Dequeue();
             return message;

@@ -26,9 +26,22 @@ namespace ZorkSms.Core
 
         private void SendResponseMessage()
         {
+            List<string> lines = new List<string>();
+            string line = string.Empty;
+            foreach(var str in _messageBuffer){
+                foreach(var c in str){
+                    if(c != '\n'){
+                        line += c;
+                    }else{
+                        lines.Add(line);
+                        line = string.Empty;
+                    }
+                }
+            }
+
             _messageBuffer.Clear();
 
-            if (PrintCompleted != null) return;
+            if (PrintCompleted != null) PrintCompleted(this, new PrintCompletedEventArgs(lines));
         }
     }
 }

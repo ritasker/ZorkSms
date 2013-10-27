@@ -668,7 +668,12 @@ namespace ZMachine.Common
 
         protected virtual void OP_SREAD(IZInstruction inst)
         {
-            ParseInput(z_io.ReadString(null), inst);
+            string input = z_io.ReadString(null);
+
+            if (string.IsNullOrEmpty(input))
+                Stop();
+            else
+                ParseInput(input, inst);
         }
 
         protected virtual void OP_PRINT_CHAR(IZInstruction inst)

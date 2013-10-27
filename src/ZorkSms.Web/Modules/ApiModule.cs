@@ -40,21 +40,24 @@ namespace ZorkSms.Web.Modules
             return new JsonResponse(smsMessages, new DefaultJsonSerializer());
         }
 
-        private dynamic ReceiveSms()
+        private async Task<dynamic> ReceiveSms()
         {
             var smsMessage = this.Bind<SmsMessage>();
 
-            var thread = new Thread(new ParameterizedThreadStart(HandleSms));
-            thread.Start(smsMessage);
+            var response = await HandleSms(smsMessage);
+
+            var clockworkApi = new API("508ed11cab000a796881e015fc5e022daf1bb6d3");
+            clockworkApi.Send(new SMS { To = smsMessage.From, Message = response });
+
             
+
             _smsRepository.Add(smsMessage);
             
             return HttpStatusCode.OK;
         }
 
-        private void HandleSms(object arg)
+        private async Task<string> HandleSms(SmsMessage smsMessage)
         {
-            SmsMessage smsMessage = (SmsMessage)arg;
             bool isNewGame = string.Equals(smsMessage.Content, "NEW GAME", StringComparison.OrdinalIgnoreCase);
 
             Game game = null;
@@ -67,7 +70,7 @@ namespace ZorkSms.Web.Modules
                 resource.Read(storyBytes, 0, (int)resource.Length);
                 resource.Close();
 
-                game = Game.Create(storyBytes);
+                game = Game.CreateNew(storyBytes);
             }
             else
             {
@@ -75,34 +78,34 @@ namespace ZorkSms.Web.Modules
 
                 if (session != null)
                 {
-                    game = Game.Create(session.Data);
-                } 
-                
-                //game.Process(smsMessage.Content);
+                    game = Game.Restore(session.Data, smsMessage.Content);
+                }
             }
 
-            //game.Start();
-            game.Process(smsMessage.Content);
-
+            EventWaitHandle wait = new EventWaitHandle(false, EventResetMode.ManualReset);
+            string message = string.Empty;
             game.PrintCompleted += (sender, args) =>
             {
-                var message = string.Concat(args.Lines);
-
-                var clockworkApi = new API("508ed11cab000a796881e015fc5e022daf1bb6d3");
-                clockworkApi.Send(new SMS { To = smsMessage.From, Message = message });
-
-                byte[] saveData = game.Save();
-                var newSession = new SessionModel { PhoneNumber = smsMessage.From, Data = saveData };
-
-                if (isNewGame)
-                {
-                    _sessionRepository.Update(newSession);
-                }
-                else
-                {
-                    _sessionRepository.Add(newSession);
-                }
+                message = string.Concat(args.Lines);
+                wait.Set();
             };
+
+            game.Start();
+            wait.WaitOne();
+
+            byte[] saveData = game.Save();
+            var newSession = new SessionModel { PhoneNumber = smsMessage.From, Data = saveData };
+
+            if (isNewGame)
+            {
+                _sessionRepository.Update(newSession);
+            }
+            else
+            {
+                _sessionRepository.Add(newSession);
+            }
+
+            return message;
         }
     }
 }
