@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\SmsMessage.cs" />
+    <Compile Include="SessionModel.cs" />
+    <Compile Include="SessionRepository.cs" />
     <Compile Include="SmsRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

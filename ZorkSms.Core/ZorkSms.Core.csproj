@@ -45,6 +45,7 @@
     <Compile Include="ClockworkKeyboard.cs" />
     <Compile Include="ClockworkWindow.cs" />
     <Compile Include="ClockworkZMachine.cs" />
+    <Compile Include="ClockworkZProcessor.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="NullFormatter.cs" />
     <Compile Include="NullWindow.cs" />

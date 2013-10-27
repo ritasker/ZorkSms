@@ -6,7 +6,7 @@ namespace ZorkSms.Core
 {
     class ClockworkZMachine : VirtualMachine
     {
-        public Window Window { get; private set; }
+        public ClockworkWindow Window { get; private set; }
 
         protected ClockworkZMachine() {
             Window = new ClockworkWindow(new SimpleFormatter());
@@ -29,6 +29,17 @@ namespace ZorkSms.Core
             z_io.Keyboard = new ClockworkKeyboard();
 
             return g;
+        }
+
+        public void Process(string message)
+        {
+            var keyboard = (ClockworkKeyboard)z_io.Keyboard;
+            keyboard.EnqueueMessage(message);
+        }
+
+        public byte[] Save()
+        {
+            return this.z_processor.Memory.Save();
         }
     }
 }

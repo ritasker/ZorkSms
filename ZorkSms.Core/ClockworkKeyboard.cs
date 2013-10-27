@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using ZMachine.VM;
 
 namespace ZorkSms.Core
@@ -22,6 +24,11 @@ namespace ZorkSms.Core
 
         public override string ReadString(int? time)
         {
+            while (_messages.Count == 0)
+            {
+                Thread.Sleep(TimeSpan.FromMilliseconds(500));
+            }
+
             string message = _messages.Dequeue();
             return message;
         }

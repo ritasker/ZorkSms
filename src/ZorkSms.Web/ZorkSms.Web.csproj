@@ -41,6 +41,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Clockwork">
+      <HintPath>..\..\packages\Clockwork.1.1\lib\Clockwork.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MongoDB.Bson">
       <HintPath>..\..\packages\mongocsharpdriver.1.8.3\lib\net35\MongoDB.Bson.dll</HintPath>
@@ -85,6 +88,7 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <Content Include="Documentation.chm" />
+    <EmbeddedResource Include="minizork.z3" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

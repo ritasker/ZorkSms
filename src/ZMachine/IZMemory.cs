@@ -16,5 +16,8 @@ namespace ZMachine
         short PeekStack();
         short GetVariable(int v);
         void PutVariable(int v, short value);
+
+        byte[] Save();
+        void Restore(byte[] data);
     }
 }
