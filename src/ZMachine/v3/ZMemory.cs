@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ZMachine.v3
 {
@@ -13,6 +14,8 @@ namespace ZMachine.v3
     [Serializable]
     public class ZMemory : IZMemory
     {
+        public byte[] Data { get { return m_bytes; } }
+
         // The raw memory bytes.
         protected byte[] m_bytes;
 
@@ -47,6 +50,15 @@ namespace ZMachine.v3
                 else
                     m_locals = value;
             }
+        }
+
+        public ZMemory() { }
+        private ZMemory(byte[] data, short[] locals, Stack<short> stack)
+        {
+            m_bytes = data;
+            m_locals = locals;
+            m_stack = stack;
+            m_header = new ZHeader(this);
         }
 
         /// <summary>
@@ -183,13 +195,46 @@ namespace ZMachine.v3
                 return;
         }
 
-        public byte[] Save()
+        public void Save(System.IO.BinaryWriter writer)
         {
-            return m_bytes;
+            writer.Write(m_bytes.Length);
+            writer.Write(m_bytes, 0, m_bytes.Length);
+
+            writer.Write(m_locals.Length);
+            foreach (var local in m_locals)
+            {
+                writer.Write(local);
+            }
+
+            writer.Write(m_stack.Count);
+            foreach (var stack in m_stack.ToArray())
+            {
+                writer.Write(stack);
+            }
         }
 
-        public void Restore(byte[] data){
-            m_bytes = data;
+        public static ZMemory Load(BinaryReader reader)
+        {
+            int memSize = reader.ReadInt32();
+
+            byte[] data = reader.ReadBytes(memSize);
+
+            int localsSize = reader.ReadInt32();
+            short[] locals = new short[localsSize];
+            for (int i = 0; i < localsSize; i++)
+            {
+                locals[i] = reader.ReadInt16();
+            }
+
+            int stackSize = reader.ReadInt32();
+
+            List<short> stack = new List<short>();
+            for (int i = 0; i < stackSize; i++)
+            {
+                stack.Add(reader.ReadInt16());
+            }
+
+            return new ZMemory(data, locals, new Stack<short>(stack));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MongoRepository;
+using System.Collections.Generic;
 
 namespace ZorkSms.Data
 {
@@ -6,5 +7,6 @@ namespace ZorkSms.Data
     {
         public string PhoneNumber { get; set; }
         public byte[] Data { get; set; }
+        public List<string> Commands { get; set; }
     }
 }

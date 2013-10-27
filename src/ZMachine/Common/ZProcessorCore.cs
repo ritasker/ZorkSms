@@ -3,6 +3,7 @@
 // ==================================================================
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ZMachine.Common
@@ -117,13 +118,13 @@ namespace ZMachine.Common
         {
             while (Running)
             {
-                z_instruct.Decode(z_frame.PC);
+                z_instruct.Decode(z_frame.ProgramCounter);
 
 #if (DEBUG)
                 System.Diagnostics.Debug.WriteLine(z_instruct.ToString());
 #endif
 
-                z_frame.PC += z_instruct.Length;
+                z_frame.ProgramCounter += z_instruct.Length;
 
                 switch (z_instruct.OpcodeType)
                 {
@@ -303,6 +304,47 @@ namespace ZMachine.Common
                 ILLEGAL,        // 1E
                 ILLEGAL         // 1F            
             };
+        }
+
+
+        public virtual void Save(System.IO.BinaryWriter writer)
+        {
+            this.z_memory.Save(writer);
+
+            var frames = GetFrames();
+
+            writer.Write(frames.Count());
+
+            foreach (var frame in frames)
+            {
+                frame.Save(writer);
+            }
+        }
+
+        private IEnumerable<ZCallFrame> GetFrames()
+        {
+            List<ZCallFrame> frames = new List<ZCallFrame>();
+
+            var currentFrame = this.z_frame;
+
+            while (currentFrame != null)
+            {
+                frames.Add(currentFrame);
+                currentFrame = currentFrame.PrevCallFrame;
+            }
+
+            frames.Reverse();
+
+            return frames;
+        }
+
+
+        public ZIO IO
+        {
+            get
+            {
+                return z_io;
+            }
         }
     }
 }

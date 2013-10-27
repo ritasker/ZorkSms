@@ -5,6 +5,7 @@ namespace ZMachine
 {
     public interface IZMemory
     {
+        byte[] Data { get; }
         IZHeader Header { get; }
         short[] Locals { get; set; }
         void LoadStory(byte[] storyBytes);
@@ -17,7 +18,6 @@ namespace ZMachine
         short GetVariable(int v);
         void PutVariable(int v, short value);
 
-        byte[] Save();
-        void Restore(byte[] data);
+        void Save(System.IO.BinaryWriter writer);
     }
 }

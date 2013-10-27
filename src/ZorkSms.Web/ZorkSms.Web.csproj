@@ -90,6 +90,7 @@
     <Content Include="packages.config" />
     <Content Include="Documentation.chm" />
     <EmbeddedResource Include="minizork.z3" />
+    <Content Include="Views\TestReceive.sshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

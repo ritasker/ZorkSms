@@ -8,25 +8,25 @@ namespace ZorkSms.Core
 
         public event EventHandler<PrintCompletedEventArgs> PrintCompleted;
 
-        protected Game(byte[] data)
+        protected Game(ClockworkZMachine virtualMachine)
         {
-            _virtualMachine = ClockworkZMachine.Create(data);
+            _virtualMachine = virtualMachine;
             _virtualMachine.Window.PrintCompleted += OnPrintCompleted;
         }
 
-        protected Game(byte[] data, string message) : this(data)
+        protected Game(ClockworkZMachine virtualMachine, string message) : this(virtualMachine)
         {
             _virtualMachine.Process(message);
         }
 
-        public static Game CreateNew(byte[] data)
+        public static Game CreateNew(byte[] data, IEnumerable<string> commands)
         {
-            return new Game(data);
+            return new Game(ClockworkZMachine.Create(data, commands));
         }
 
-        public static Game Restore(byte[] data, string message)
+        public static Game Restore(BinaryReader reader, string message)
         {
-            return new Game(data, message);
+            return new Game(ClockworkZMachine.Load(reader), message);
         }
 
         public void Process(string message)
@@ -44,9 +44,9 @@ namespace ZorkSms.Core
             if (PrintCompleted != null) PrintCompleted(this, args);
         }
 
-        public byte[] Save()
+        public void Save(BinaryWriter writer)
         {
-            return _virtualMachine.Save();
+            _virtualMachine.Save(writer);
         }
     }
 }

@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ZMachine.Common 
 {
@@ -19,10 +20,10 @@ namespace ZMachine.Common
         /// <summary>
         /// Constructor.  Initializes the program counter to the value provided.
         /// </summary>
-        /// <param name="PC">Program Counter</param>
-        public ZCallFrame(int PC)
+        /// <param name="programCounter">Program Counter</param>
+        public ZCallFrame(int programCounter)
         {
-            this.PC = PC;
+            this.ProgramCounter = programCounter;
         }
 
         /// <summary>
@@ -34,7 +35,7 @@ namespace ZMachine.Common
         /// <summary>
         /// Program Counter
         /// </summary>
-        public int PC { get; set; }
+        public int ProgramCounter { get; set; }
 
         /// <summary>
         /// Keeps track of the variable where the result is stored after a routine returns (and this call frame is restored).  
@@ -53,5 +54,51 @@ namespace ZMachine.Common
 
         public int ArgCount { get; set; }
         public int FrameNumber { get; set; }
+
+        public ZCallFrame(int programCounter, int argCount, int frameNum, byte? result, short[] locals){
+            ProgramCounter = programCounter;
+            ArgCount = argCount;
+            FrameNumber = frameNum;
+            Result = result;
+            Locals = locals;
+        }
+
+        public void Save(System.IO.BinaryWriter writer)
+        {
+            writer.Write(ProgramCounter);
+            writer.Write(ArgCount);
+            writer.Write(FrameNumber);
+            writer.Write(Result.HasValue);
+            if (Result.HasValue) writer.Write(Result.Value);
+
+            writer.Write(Locals.Length);
+
+            for (int i = 0; i < Locals.Length; i++)
+            {
+                writer.Write(Locals[i]);
+            }
+        }
+
+        public static ZCallFrame Load(BinaryReader reader)
+        {
+            int programCounter = reader.ReadInt32();
+            int argCount = reader.ReadInt32();
+            int frameNum = reader.ReadInt32();
+            bool hasResult = reader.ReadBoolean();
+
+            byte? result = null;
+
+            if (hasResult) result = reader.ReadByte();
+
+            int localSize = reader.ReadInt32();
+
+            short[] locals = new short[localSize];
+            for (int i = 0; i < localSize; i++)
+            {
+                locals[i] = reader.ReadInt16();
+            }
+
+            return new ZCallFrame(programCounter, argCount, frameNum, result, locals);
+        }
     }
 }

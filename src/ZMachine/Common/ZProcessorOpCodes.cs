@@ -57,7 +57,7 @@ namespace ZMachine.Common
 #if (DEBUG)
                     System.Diagnostics.Debug.Write(" [TRUE=TRUE: ");
                     if (offset > 1)
-                        System.Diagnostics.Debug.Write((z_frame.PC + offset - 2).ToString("X"));
+                        System.Diagnostics.Debug.Write((z_frame.ProgramCounter + offset - 2).ToString("X"));
                     else
                         System.Diagnostics.Debug.Write(offset.ToString("X"));
                     System.Diagnostics.Debug.WriteLine("] ");
@@ -76,12 +76,12 @@ namespace ZMachine.Common
                     }
 
                     // branch:  PC = PC + Offset - 2
-                    z_frame.PC += offset - 2;
+                    z_frame.ProgramCounter += offset - 2;
 
                     // Handle twos-compliment negative
                     if ((offset & 0x2000) == 0x2000)
                     {
-                        z_frame.PC -= 0x4000;
+                        z_frame.ProgramCounter -= 0x4000;
                     }
 
                 }
@@ -94,7 +94,7 @@ namespace ZMachine.Common
 #if (DEBUG)
                 System.Diagnostics.Debug.Write(" [FALSE=FALSE: ");
                 if (offset > 1)
-                    System.Diagnostics.Debug.Write((z_frame.PC + offset - 2).ToString("X"));
+                    System.Diagnostics.Debug.Write((z_frame.ProgramCounter + offset - 2).ToString("X"));
                 else
                     System.Diagnostics.Debug.Write(offset.ToString("X"));
                 System.Diagnostics.Debug.WriteLine("] ");
@@ -113,12 +113,12 @@ namespace ZMachine.Common
                 }
 
                 // branch:  PC = PC + Offset - 2
-                z_frame.PC += offset - 2;
+                z_frame.ProgramCounter += offset - 2;
 
                 // Handle twos-compliment negative with weird bitlength number
                 if ((offset & 0x2000) == 0x2000)
                 {
-                    z_frame.PC -= 0x4000;
+                    z_frame.ProgramCounter -= 0x4000;
                 }
 
             }
@@ -356,7 +356,7 @@ namespace ZMachine.Common
         protected virtual void OP_JUMP(IZInstruction inst)
         {
             int offset = inst.Operands[0];
-            z_frame.PC += offset - 2;
+            z_frame.ProgramCounter += offset - 2;
         }
 
         protected virtual void OP_PRINT_PADDR(IZInstruction inst)
@@ -393,7 +393,7 @@ namespace ZMachine.Common
 
         protected virtual void OP_PRINT(IZInstruction inst)
         {
-            string ret = ZMachine.Common.ZText.PrintZString(z_memory, z_frame.PC);
+            string ret = ZMachine.Common.ZText.PrintZString(z_memory, z_frame.ProgramCounter);
             AdvancePCBeyondString();
 
 #if (DEBUG)
@@ -408,8 +408,8 @@ namespace ZMachine.Common
             int tmp = 0;
             while ((tmp & 0x8000) == 0)
             {
-                tmp = z_memory.GetWord(z_frame.PC);
-                z_frame.PC += 2;
+                tmp = z_memory.GetWord(z_frame.ProgramCounter);
+                z_frame.ProgramCounter += 2;
             }
         }
 
@@ -417,7 +417,7 @@ namespace ZMachine.Common
 
         protected virtual void OP_PRINT_RET(IZInstruction inst)
         {
-            string ret = ZMachine.Common.ZText.PrintZString(z_memory, z_frame.PC);
+            string ret = ZMachine.Common.ZText.PrintZString(z_memory, z_frame.ProgramCounter);
             AdvancePCBeyondString();
 
 #if (DEBUG)

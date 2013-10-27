@@ -19,6 +19,7 @@ namespace ZorkSms.Web.Modules
 {
     public class ApiModule : NancyModule
     {
+        private static object sessionLock = new object();
         private readonly SmsRepository _smsRepository;
         private readonly SessionRepository _sessionRepository;
 
@@ -32,6 +33,9 @@ namespace ZorkSms.Web.Modules
             Post["/ReceiveSms"] = o => ReceiveSms();
 
             Get["/Messages"] = o => Messages();
+
+            Get["/TestReceive"] = o => { return this.View["TestReceive"]; };
+            Post["/TestReceive"] = o => { return TestReceive().Result; };
         }
 
         private dynamic Messages()
@@ -48,64 +52,75 @@ namespace ZorkSms.Web.Modules
 
             var clockworkApi = new API("508ed11cab000a796881e015fc5e022daf1bb6d3");
             clockworkApi.Send(new SMS { To = smsMessage.From, Message = response });
-
-            
-
+                        
             _smsRepository.Add(smsMessage);
             
             return HttpStatusCode.OK;
         }
 
+        private async Task<string> TestReceive()
+        {
+            var smsMessage = this.Bind<SmsMessage>();
+
+            var response = await HandleSms(smsMessage);
+
+            _smsRepository.Add(smsMessage);
+
+            return response;
+        }
+
         private async Task<string> HandleSms(SmsMessage smsMessage)
         {
+            SessionModel session = _sessionRepository.FindByPhoneNumber(smsMessage.From);
+
             bool isNewGame = string.Equals(smsMessage.Content, "NEW GAME", StringComparison.OrdinalIgnoreCase);
 
             Game game = null;
-            if (isNewGame)
+            var assembly = Assembly.GetExecutingAssembly();
+            var resource = assembly.GetManifestResourceStream("ZorkSms.Web.minizork.z3");
+
+            byte[] storyBytes = new byte[resource.Length];
+            resource.Read(storyBytes, 0, (int)resource.Length);
+            resource.Close();
+
+            List<string> commands = new List<string>();
+
+            if (!isNewGame && session != null)
             {
-                var assembly = Assembly.GetExecutingAssembly();
-                var resource = assembly.GetManifestResourceStream("ZorkSms.Web.minizork.z3");
-
-                byte[] storyBytes = new byte[resource.Length];
-                resource.Read(storyBytes, 0, (int)resource.Length);
-                resource.Close();
-
-                game = Game.CreateNew(storyBytes);
+                commands.AddRange(session.Commands);
+                commands.Add(smsMessage.Content);
             }
-            else
-            {
-                SessionModel session = _sessionRepository.FindByPhoneNumber(smsMessage.From);
 
-                if (session != null)
-                {
-                    game = Game.Restore(session.Data, smsMessage.Content);
-                }
-            }
+            game = Game.CreateNew(storyBytes, commands);
 
             EventWaitHandle wait = new EventWaitHandle(false, EventResetMode.ManualReset);
-            string message = string.Empty;
+            List<string> messages = new List<string>();
             game.PrintCompleted += (sender, args) =>
             {
-                message = string.Join("\n", args.Lines);
+                messages.Add(string.Join("\n", args.Lines));
                 wait.Set();
             };
 
             game.Start();
             wait.WaitOne();
 
-            byte[] saveData = game.Save();
-            var newSession = new SessionModel { PhoneNumber = smsMessage.From, Data = saveData };
+            var newSession = new SessionModel { PhoneNumber = smsMessage.From, Commands = commands };
 
-            if (isNewGame)
+            lock (sessionLock)
             {
-                _sessionRepository.Update(newSession);
-            }
-            else
-            {
-                _sessionRepository.Add(newSession);
+                session = _sessionRepository.FindByPhoneNumber(smsMessage.From);
+
+                if (session != null)
+                {
+                    _sessionRepository.Update(newSession);
+                }
+                else
+                {
+                    _sessionRepository.Add(newSession);
+                }
             }
 
-            return message;
+            return messages.Last();
         }
     }
 }

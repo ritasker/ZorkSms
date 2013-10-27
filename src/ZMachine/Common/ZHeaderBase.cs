@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ZMachine.Common
 {
@@ -116,7 +117,5 @@ namespace ZMachine.Common
             var test = (byte)((1 << bitNumber) & 0xff);
             return (Flags2 & test) == test;
         }
-
-
     }
 }

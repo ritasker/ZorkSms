@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using ZMachine.v3;
 using ZMachine.VM;
 using ZMachine.VM.Console.Formatters;
 
 namespace ZorkSms.Core
 {
-    class ClockworkZMachine : VirtualMachine
+    public class ClockworkZMachine : VirtualMachine
     {
         public ClockworkWindow Window { get; private set; }
 
@@ -12,10 +15,13 @@ namespace ZorkSms.Core
             Window = new ClockworkWindow(new SimpleFormatter());
         }
 
-        public static ClockworkZMachine Create(byte[] storyBytes)
+        public static ClockworkZMachine Create(byte[] storyBytes, IEnumerable<string> commands)
         {
             var ret = new ClockworkZMachine();
             ret.Load(storyBytes);
+
+            foreach (var command in commands) ret.Process(command);
+
             return ret;
         }
 
@@ -37,9 +43,25 @@ namespace ZorkSms.Core
             keyboard.EnqueueMessage(message);
         }
 
-        public byte[] Save()
+        public void Save(BinaryWriter writer)
         {
-            return this.z_processor.Memory.Save();
+            z_processor.Save(writer);
+        }
+
+        public static ClockworkZMachine Load(BinaryReader reader)
+        {
+            var virtualMachine = new ClockworkZMachine();
+            virtualMachine.z_processor = ClockworkZProcessor.Load(reader);
+
+            virtualMachine.z_io = virtualMachine.z_processor.IO;
+            virtualMachine.z_io.Screen = new ZMachine.v3.V3Screen(virtualMachine.z_processor as ZProcessor);
+
+            virtualMachine.z_io.Screen.UpperWindow = new NullWindow();
+            virtualMachine.z_io.Screen.LowerWindow = virtualMachine.Window;
+            virtualMachine.z_io.Reset();
+            virtualMachine.z_io.Keyboard = new ClockworkKeyboard();
+
+            return virtualMachine;
         }
     }
 }

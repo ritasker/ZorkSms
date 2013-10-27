@@ -11,7 +11,7 @@ namespace ZorkSms.Data
     {
         public SessionModel FindByPhoneNumber(string phoneNumber)
         {
-            return this.SingleOrDefault(x => string.Equals(x.PhoneNumber, phoneNumber, StringComparison.OrdinalIgnoreCase));
+            return this.SingleOrDefault(x => x.PhoneNumber == phoneNumber);
         }
     }
 }
