@@ -35,13 +35,27 @@ namespace ZorkSms.Web.Modules
             var response = await HandleSms(smsMessage);
 
             var clockworkApi = new API("508ed11cab000a796881e015fc5e022daf1bb6d3");
-            clockworkApi.Send(new SMS { To = smsMessage.From, Message = response });
+            if (!string.IsNullOrWhiteSpace(response))
+            {
+                clockworkApi.Send(new SMS { To = smsMessage.From, Message = response });
+            }
+            else
+            {
+                clockworkApi.Send(new SMS { To = smsMessage.From, Message = "Thanks for playing. You will stop receiving messages." });
+            }
                         
             return HttpStatusCode.OK;
         }
 
         private async Task<string> HandleSms(SmsMessage smsMessage)
         {
+            bool isStop = string.Equals(smsMessage.Content, "STOP", StringComparison.OrdinalIgnoreCase);
+
+            if (isStop) {
+                _sessionRepository.Delete(x => x.PhoneNumber == smsMessage.From);
+                return string.Empty;
+            }
+
             bool isNewGame = string.Equals(smsMessage.Content, "NEW GAME", StringComparison.OrdinalIgnoreCase);
 
             SessionModel session = _sessionRepository.FindByPhoneNumber(smsMessage.From);
