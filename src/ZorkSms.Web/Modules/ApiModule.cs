@@ -86,7 +86,7 @@ namespace ZorkSms.Web.Modules
             string message = string.Empty;
             game.PrintCompleted += (sender, args) =>
             {
-                message = string.Concat(args.Lines);
+                message = string.Join("\n", args.Lines);
                 wait.Set();
             };
 
