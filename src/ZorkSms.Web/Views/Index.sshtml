@@ -2,10 +2,27 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Zork SMS | Hack Manchester 2013</title>
+	<style>
+		body{
+			background-color: #000;
+			font-family : courier new;
+			color:#fff;
+		}
+
+		#headerImg
+		{
+			text-align:center;
+		}
+	</style>
 </head>
 <body>
+	<div id="headerImg">
+		<img src="/content/images/zork-615.jpg" />
+	</div>
+
     <h1>Zork SMS</h1>
     <p>This is a project for Hack Manchester 2013.</p>
     <p>To play text: <strong>NEW GAME</strong> to <strong>07860 033 040</strong>.</p>
+	<p>&gt;</p>
 </body>
 </html>

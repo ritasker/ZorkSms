@@ -77,6 +77,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Images\zork-615.jpg" />
     <Content Include="Views\Index.sshtml" />
     <Content Include="Web.config" />
   </ItemGroup>
